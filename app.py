@@ -1,20 +1,30 @@
 # -*- coding: utf-8 -*-
 
-import os, shutil
+import os, shutil, sys
+
 import tkinter as tk
-from tkinter import filedialog, Text
+from tkinter import filedialog
 
-input_path = ''
 
-if os.path.isfile('save.txt'):
+def get_correct_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath('.')
+    
+    return os.path.join(base_path, relative_path)
 
-    with open('save.txt','r') as f:
+saved_file = get_correct_path('./save.txt')
+
+if os.path.isfile(saved_file):
+
+    with open(saved_file,'r') as f:
         input_path = f.read()
         input_path = input_path.strip()
        
 print(input_path)
 
-def selectDirectory():
+def select_directory():
     file_path = filedialog.askdirectory(initialdir='./')
     print(file_path)
 
@@ -23,13 +33,16 @@ def selectDirectory():
 
     label = tk.Label(directory_frame, text=file_path, wraplength = 600, justify="center", bg="gray")
     label.pack()
-    global input_path 
-    input_path= file_path
+
+    global input_path
+
+    if file_path is not '':
+        input_path = file_path
 
 
-def startProcess():
+def start_process():
     print(input_path)
-    song_title = song_title_frame.get("1.0","end")
+    song_title = song_title_frame.get("1.0", "end")
     song_title = song_title.strip()
 
    
@@ -60,7 +73,7 @@ def startProcess():
 
 
 root = tk.Tk()
-
+root.title("Rename Project from Template")
 canvas = tk.Canvas(root, height = 500, width = 600, bg = '#07c2cc')
 canvas.pack()
 
@@ -75,15 +88,15 @@ song_title_frame.place(relwidth = 0.9, height = 20, relx = 0.05, rely = 0.2)
 label = tk.Label(directory_frame, text=input_path, wraplength = 600, justify='center', bg='gray')
 label.pack()
 
-setDirectory = tk.Button(root, text = "Choose Path", command = selectDirectory)
+setDirectory = tk.Button(root, text = "Choose Path", command = select_directory)
 setDirectory.pack()
 
-createFolder = tk.Button(root, text = "Create Folder", command = startProcess)
+createFolder = tk.Button(root, text = "Create Folder", command = start_process)
 createFolder.pack()
 
 root.mainloop()
 
 
-    
-with open('save.txt', 'w') as f:
-    f.write(input_path)
+#
+# with open(saved_file, 'w') as f:
+#     f.write(input_path)
