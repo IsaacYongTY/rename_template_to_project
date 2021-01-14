@@ -1,14 +1,26 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5 import QtWidgets, uic
-import os, shutil, sys
+import os
+import shutil
+import sys
+
+
+def get_correct_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath('.')
+
+    return os.path.join(base_path, relative_path)
+
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
 
         relative_path = '.'
-        self.directory = self.get_correct_path(relative_path)
+        self.directory = get_correct_path(relative_path)
 
         uic.loadUi(f'{self.directory}/rename_template_to_project.ui', self)
 
@@ -18,14 +30,6 @@ class Ui(QtWidgets.QMainWindow):
         self.createFolderButton.clicked.connect(self.create_folder_and_rename)
 
         self.show()
-
-    def get_correct_path(self, relative_path):
-        try:
-            base_path = sys._MEIPASS
-        except Exception:
-            base_path = os.path.abspath('.')
-
-        return os.path.join(base_path, relative_path)
 
     def load_default_template_path(self):
         default_path_file = self.get_correct_path(f'{self.directory}/default_directory.txt')
@@ -68,13 +72,14 @@ class Ui(QtWidgets.QMainWindow):
                 for filename in filenames:
                     print(f'FILE INSIDE {folderName}: {filename}')
 
-                    if(template_string in filename):
+                    if template_string in filename:
                         new_filename = filename.replace(template_string, song_title)
                         print(f'{folderName}/{filename}')
                         os.rename(f'{folderName}/{filename}', f'{folderName}/{new_filename}')
                         print('Renamed successfully')
 
             self.statusLabel.setText(f'Project created!\n{destination_path}')
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
