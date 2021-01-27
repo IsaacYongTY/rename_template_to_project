@@ -1,2 +1,4 @@
 default_directory.txt
 venv/
+venv_win/
+venv_win32/
